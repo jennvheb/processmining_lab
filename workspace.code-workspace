@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../VSCode"
+		},
+		{
+			"name": "processmining_lab",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
