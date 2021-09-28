@@ -1,10 +1,13 @@
 import copy
 import itertools
-#import graphviz
+import tempfile
+
 #from snakes.nets import *
-#from my_nets import *
-#import snakes.plugins
-#snakes.plugins.load('gv', 'nets', 'my_nets')
+#f
+"""import snakes.plugins
+snakes.plugins.load('gv', 'nets', 'my_nets')
+from my_nets import *"""
+import graphviz
 from pm4py.visualization.petri_net import visualizer as pn_visualizer
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 from pm4py.objects.petri_net.utils import petri_utils
@@ -34,7 +37,7 @@ class Alpha(object):
         self.ti = self._build_ti_set(self.log)
         self.to = self._build_to_set(self.log)
        
-        self._build_pn_from_alpha(self.tl, self.yl, self.ti, self.to)
+        self._build_pn_from_alpha(self.yl, self.ti, self.to)
        
 
     def _build_tl_set(self, log):
@@ -109,7 +112,6 @@ class Alpha(object):
 
     def _build_xl_set(self, tl, unrel, caus):
 
-        # problem: outputs eg. (('a',), ('e', 'c')) instead of ('a',), ('c', 'e'))
         xl = set()
         subsets = set()
         for i in range(1,len(tl)):
@@ -127,7 +129,7 @@ class Alpha(object):
 
     def _build_yl_set(self, xl):
         # only maximal pairs of xl should be in yl
-        # same for xl
+   
         yl = copy.deepcopy(xl)
         yl = xl.copy()
         for x in xl:
@@ -142,82 +144,56 @@ class Alpha(object):
         return yl
 
     
-    def _build_pn_from_alpha(self, tl, yl, ti, to):
-        '''''
-        Problem: With PM4PY i get the error: "Petri Nets are bipartit graphs" on the loop through ti
-        Problem: With snakes i get the import error for my_nets
-        '''''
-        net = PetriNet("new_petri_net")
+    def _build_pn_from_alpha(self, yl, ti, to):
+        #so graphics work now but the output is still crap
+        #i need to read the doc properly when i find the time
+        dot = graphviz.Digraph("alpha")
 
-        source = PetriNet.Place("source")
-        sink = PetriNet.Place("sink")
-        net.places.add(source)
-        net.places.add(sink)
-
-
-        
-        for (a, b) in yl:
-            t_1 = PetriNet.Transition("name_1", "%s" % (a, b))
-            net.transitions.add(t_1)
-            for activity in a:
-                p_1 = PetriNet.Place("%s" % activity)
-                net.places.add(p_1)
-                petri_utils.add_arc_from_to(p_1, t_1, net)
-            for activity in b:
-                p_1 = PetriNet.Place("%s" % activity)
-                net.places.add(p_1)
-                petri_utils.add_arc_from_to(t_1, p_1, net)
-            
-
-        # Add arcs
-        
+        il = dot.node("iL")
         for i in ti:
-            p_1 = PetriNet.Place("%s" % i)
-            net.places.add(p_1)
-            petri_utils.add_arc_from_to(source, p_1, net)
-            
+            dot.edge(str(il), str(i))
+
+        ol = dot.node("oL")
         for o in to:
-            p_2 = PetriNet.Place("%s" % o)
-            net.places.add(p_2)
-            petri_utils.add_arc_from_to(p_2, sink, net)
-        
-        # Adding tokens
-        initial_marking = Marking()
-        initial_marking[source] = 1
-        final_marking = Marking()
-        final_marking[sink] = 1
+            dot.edge(str(o),str(ol))
 
-        
-        gviz = pn_visualizer.apply(net, initial_marking, final_marking)
-        pn_visualizer.view(gviz)
+        for elem in yl:
+            dot.node(str(elem),str(elem), shape="circle")
+                
 
-        '''
-        net = PetriNet('alpha')
-        # creating source, p_1 and sink place
-
-        for t in tl:
-            net.add_transition(Transition(t))
-
-        initial_marking = net.add_place(Place('Start', [1]))
-        for i in ti:
-            net.add_input('Start', i, Variable('C'))
-
-        final_marking = net.add_place(Place('End', [0]))  
-        for o in to:
-            net.add_output('End', o, Variable(o))       
-
-
-            i = 1
         for (a, b) in yl:
-            net.add_place(Place(str(i), []))
+            dot.node(str(a),str(a), shape="box")
+            dot.node(str(b),str(b), shape="box")
             for activity in a:
-                net.add_output(str(i), activity, Variable('C'))
+                dot.edge(str(activity), str((a,b)), )
             for activity in b:
-                net.add_input(str(i), activity, Variable('C'))
-            i += 1
+                dot.edge(str((a,b)), str(activity))
+            
         
-        '''
 
+        #dot.format = 'svg'
+        dot.view(tempfile.mktemp('.gv.svg'))
+        """
+        for elem in yl:
+            for i in elem[0]:
+                dot.edge("%s".format(i), "%s".format(elem))
+                dot.node("%s".format(i), shape="box")
+                dot.node("%s".format(elem), shape="circle")
+                
+            for i in elem[1]:
+                dot.edge("%s".format(elem), "%s".format(i) )
+                dot.node("%s".format(i), shape="box")
+                
+        for i in ti:
+            dot.edge("%s".format(il), "%s".format(i))
+        for o in to:
+            dot.edge("%s".format(o),"%s".format(ol))
+
+        #dot.format = 'svg'
+        dot.view(tempfile.mktemp('.gv.svg'))
+        """
         
+
+
         
 

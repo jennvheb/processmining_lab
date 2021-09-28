@@ -1,0 +1,36 @@
+digraph alpha {
+	iL
+	oL
+	"%s" -> "%s"
+	"%s" [shape=box]
+	"%s" [shape=circle]
+	"%s" -> "%s"
+	"%s" [shape=box]
+	"%s" [shape=circle]
+	"%s" -> "%s"
+	"%s" [shape=box]
+	"%s" -> "%s"
+	"%s" [shape=box]
+	"%s" [shape=circle]
+	"%s" -> "%s"
+	"%s" [shape=box]
+	"%s" [shape=circle]
+	"%s" -> "%s"
+	"%s" [shape=box]
+	"%s" -> "%s"
+	"%s" [shape=box]
+	"%s" [shape=circle]
+	"%s" -> "%s"
+	"%s" [shape=box]
+	"%s" -> "%s"
+	"%s" [shape=box]
+	"%s" -> "%s"
+	"%s" [shape=box]
+	"%s" [shape=circle]
+	"%s" -> "%s"
+	"%s" [shape=box]
+	"%s" -> "%s"
+	"%s" [shape=box]
+	"%s" -> "%s"
+	"%s" -> "%s"
+}
