@@ -11,7 +11,7 @@ import sys
 
 
 def main(argv):
-    log = xes_importer.apply('/Users/jenny/Downloads/datasets/L1.xes')
+    log = xes_importer.apply('/Users/jenny/Downloads/datasets/L5.xes')
     variants = pm4py.get_variants_as_tuples(log)
     Alpha(variants.keys())
 

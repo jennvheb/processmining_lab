@@ -37,7 +37,7 @@ class Alpha(object):
         self.ti = self._build_ti_set(self.log)
         self.to = self._build_to_set(self.log)
        
-        self._build_pn_from_alpha(self.yl, self.ti, self.to)
+        self._build_pn_from_alpha(self.tl, self.yl, self.ti, self.to)
        
 
     def _build_tl_set(self, log):
@@ -144,54 +144,30 @@ class Alpha(object):
         return yl
 
     
-    def _build_pn_from_alpha(self, yl, ti, to):
-        #so graphics work now but the output is still crap
-        #i need to read the doc properly when i find the time
+    def _build_pn_from_alpha(self, tl, yl, ti, to):
+        # i still need to test it more to make sure it really works
         dot = graphviz.Digraph("alpha")
-
-        il = dot.node("iL")
-        for i in ti:
-            dot.edge(str(il), str(i))
-
-        ol = dot.node("oL")
-        for o in to:
-            dot.edge(str(o),str(ol))
-
+        dot.graph_attr['rankdir'] = 'LR'
         for elem in yl:
-            dot.node(str(elem),str(elem), shape="circle")
-                
-
+            dot.node(str(elem),str(elem), shape="box") # issue of things being out of order
+            
+        for elem in tl:
+            dot.node(str(elem))
+            if elem in ti:
+                dot.node('iL')
+                dot.edge('iL', str(elem))
+            if elem in to:
+                dot.node('oL')
+                dot.edge(str(elem), 'oL')
+     
         for (a, b) in yl:
-            dot.node(str(a),str(a), shape="box")
-            dot.node(str(b),str(b), shape="box")
             for activity in a:
                 dot.edge(str(activity), str((a,b)), )
             for activity in b:
                 dot.edge(str((a,b)), str(activity))
-            
-        
 
-        #dot.format = 'svg'
         dot.view(tempfile.mktemp('.gv.svg'))
-        """
-        for elem in yl:
-            for i in elem[0]:
-                dot.edge("%s".format(i), "%s".format(elem))
-                dot.node("%s".format(i), shape="box")
-                dot.node("%s".format(elem), shape="circle")
-                
-            for i in elem[1]:
-                dot.edge("%s".format(elem), "%s".format(i) )
-                dot.node("%s".format(i), shape="box")
-                
-        for i in ti:
-            dot.edge("%s".format(il), "%s".format(i))
-        for o in to:
-            dot.edge("%s".format(o),"%s".format(ol))
-
-        #dot.format = 'svg'
-        dot.view(tempfile.mktemp('.gv.svg'))
-        """
+       
         
 
 
