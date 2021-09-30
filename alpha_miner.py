@@ -95,33 +95,37 @@ class Alpha(object):
         print("parallel:", parallel)
         return parallel
 
-    def _check_set(self,A,ncs):
+    def _check_never_follow(self,A,unrel):
+        # check if all elements of A (B) never follow one another
         for event in A:
             for event2 in A:
-                if (event, event2) not in ncs:
+                if (event, event2) not in unrel:
                     return False
         return True
 
-    def _check_outsets(self,A,B, cs):
+    def _check_causality(self,A,B, caus):
+        # check if all elements of A are causal dependencies to all elements of B
         for event in A:
             for event2 in B:
-                if (event, event2) not in cs:
+                if (event, event2) not in caus:
                     return False
         return True
 
 
     def _build_xl_set(self, tl, unrel, caus):
-
         xl = set()
+        #create a subset containing possible combinations in tl up to the length of tl
         subsets = set()
         for i in range(1,len(tl)):
             for s in itertools.combinations(tl, i):
                 subsets.add(s)
+        #for each combination in the subset, check if all pairs contained in it don't follow on each other
         for a in subsets:
-            reta = self._check_set(a, unrel)
+            truea = self._check_never_follow(a, unrel)
             for b in subsets:
-                retb = self._check_set(b, unrel)
-                if reta and retb and self._check_outsets(a,b,caus):
+                trueb = self._check_never_follow(b, unrel)
+        #if truea is unrelated and trueb is unrelated and both are causally related to each other, then add them to xl
+                if truea and trueb and self._check_causality(a,b,caus):
                     xl.add((a,b))
         print("xl:", xl)
         return xl
@@ -145,7 +149,6 @@ class Alpha(object):
 
     
     def _build_pn_from_alpha(self, tl, yl, ti, to):
-        # i still need to test it more to make sure it really works
         dot = graphviz.Digraph("alpha")
         dot.graph_attr['rankdir'] = 'LR'
         for elem in yl:
