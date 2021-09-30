@@ -20,7 +20,7 @@ class Heuristic():
             for index, value in enumerate(trace): 
                 # because we are accessing +1 so we have to check for -1 so its 0
                 if index != len(trace-1):
-                    ctr[value][trace[index]] += 1 #reicht nicht auch einfach value ohne trace und index? oder halt dann nur ohne index
+                    ctr[value][trace[index]] += 1 #need to check‚
         return ctr
 
     def _create_dependency_measure(self, fm, activity_set): #activity_set.a?!
