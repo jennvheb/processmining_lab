@@ -1,17 +1,7 @@
 import copy
 import itertools
 import tempfile
-
-#from snakes.nets import *
-#f
-"""import snakes.plugins
-snakes.plugins.load('gv', 'nets', 'my_nets')
-from my_nets import *"""
 import graphviz
-from pm4py.visualization.petri_net import visualizer as pn_visualizer
-from pm4py.objects.petri_net.obj import PetriNet, Marking
-from pm4py.objects.petri_net.utils import petri_utils
-
 
 
 
@@ -22,7 +12,7 @@ class Alpha(object):
     def __init__(self,log):
         self.log = log
         # all activites
-        self.tl = self._build_tl_set(self.log)
+        (self.tl, self.ti, self.to) = self._build_tl_ti_to_set(self.log)
         # directly follows
         self.df = self._build_df_set(self.log)
         # causal
@@ -34,31 +24,22 @@ class Alpha(object):
     
         self.xl = self._build_xl_set(self.tl, self.unrel, self.caus)
         self.yl = self._build_yl_set(self.xl)
-        self.ti = self._build_ti_set(self.log)
-        self.to = self._build_to_set(self.log)
        
         self._build_pn_from_alpha(self.tl, self.yl, self.ti, self.to)
        
 
-    def _build_tl_set(self, log):
+    def _build_tl_ti_to_set(self, log):
         tl = set()
+        ti = set()
+        to = set()
         for trace in log: 
             for activity in trace:
                 tl.add(activity)
-        return tl
+                ti.add(trace[0])
+                to.add(trace[-1])
+        return (tl, ti, to)
 
-    def _build_ti_set(self, log):
-        ti = set()
-        for trace in log:
-            ti.add(trace[0])
-        return ti
-
-    def _build_to_set(self, log):
-        to = set()
-        for trace in log:
-            to.add(trace[-1])
-        return to
-    
+   
     def _build_df_set(self, log):
         # directly follows relation: x>y
         df = set()
@@ -69,10 +50,10 @@ class Alpha(object):
     
     def _build_caus_set(self, ds):
         caus = set()
-        for tuple in ds:
+        for caus_tuple in ds:
             # add tuple to causality set if the reverse tuple is not in the direct successions set
-            if tuple[::-1] not in ds: 
-                caus.add(tuple)
+            if caus_tuple[::-1] not in ds: 
+                caus.add(caus_tuple)
         return caus
 
     def _build_unrel_set(self, tl, df):
@@ -81,18 +62,15 @@ class Alpha(object):
             for y in tl:
                 if (x, y) not in df and (y,x) not in df:
                     unrel.add((x, y))
-        print("unrel:", unrel)
         return unrel
 
     def _build_parallel_set(self, tl, df):
-
         parallel = set()
         
         for x in tl:
             for y in tl:
                     if (x, y) in df and (y,x) in df:
                         parallel.add((x, y))
-        print("parallel:", parallel)
         return parallel
 
     def _check_never_follow(self,A,unrel):
@@ -114,12 +92,14 @@ class Alpha(object):
 
     def _build_xl_set(self, tl, unrel, caus):
         xl = set()
+        # make it pretty
         #create a subset containing possible combinations in tl up to the length of tl
         subsets = set()
         for i in range(1,len(tl)):
             for s in itertools.combinations(tl, i):
                 subsets.add(s)
         #for each combination in the subset, check if all pairs contained in it don't follow on each other
+        print("subsets", subsets)
         for a in subsets:
             truea = self._check_never_follow(a, unrel)
             for b in subsets:
@@ -127,13 +107,11 @@ class Alpha(object):
         #if truea is unrelated and trueb is unrelated and both are causally related to each other, then add them to xl
                 if truea and trueb and self._check_causality(a,b,caus):
                     xl.add((a,b))
-        print("xl:", xl)
         return xl
     
 
     def _build_yl_set(self, xl):
         # only maximal pairs of xl should be in yl
-   
         yl = copy.deepcopy(xl)
         yl = xl.copy()
         for x in xl:
@@ -144,18 +122,15 @@ class Alpha(object):
                     if x != y:
                         yl.discard(x)
                         break
-        print("yl", yl)
         return yl
 
     
     def _build_pn_from_alpha(self, tl, yl, ti, to):
         dot = graphviz.Digraph("alpha")
-        dot.graph_attr['rankdir'] = 'LR'
         for elem in yl:
-            dot.node(str(elem),str(elem), shape="box") # issue of things being out of order
-            
+            dot.node(str(elem), str(elem)) 
         for elem in tl:
-            dot.node(str(elem))
+            dot.node(str(elem), shape="box")
             if elem in ti:
                 dot.node('iL')
                 dot.edge('iL', str(elem))
@@ -165,14 +140,8 @@ class Alpha(object):
      
         for (a, b) in yl:
             for activity in a:
-                dot.edge(str(activity), str((a,b)), )
+                dot.edge(str(activity), str((a,b)))
             for activity in b:
                 dot.edge(str((a,b)), str(activity))
 
         dot.view(tempfile.mktemp('.gv.svg'))
-       
-        
-
-
-        
-
