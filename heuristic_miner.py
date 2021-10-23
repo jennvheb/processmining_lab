@@ -45,13 +45,13 @@ class Heuristic():
         # only return the df tuples that meet the dependency measure and dependency frequency thresholds
         ds = {}
         for element in dr:
-            if dr[element] >= thrshld_df and dm[element] >= thrshld_dm:
+            if dr[element] >= float(thrshld_df) and dm[element] >= float(str(thrshld_dm)):
                 ds[element] = dr[element]
         return ds
 
     
     def _create_causal_net(self, tl, ds, dr, dm):
-        causal_net = graphviz.Digraph("causal net")
+        causal_net = graphviz.Digraph("cnet")
         causal_net.node_attr['shape'] = 'box'
         causal_net.node_attr['style'] = 'rounded'
         for elem in self.ti:
@@ -65,8 +65,7 @@ class Heuristic():
         for elem in ds:
                 causal_net.edge(str(elem[0]),str(elem[1]), ' ['+str(dr[elem])+'], ('+str(dm[elem])+ ')')
         
-        causal_net.view(tempfile.mktemp('.gv.svg'))
-
+        causal_net.render(directory='static', format='svg')
       
     
 

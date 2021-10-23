@@ -1,0 +1,26 @@
+The log files are taken from [1] and [2]. You can compare your results to the figures contained in [1] and [2] as well as to results produced by existing tools/libraries like ProM, PM4Py, BupaR, ... .
+------------------------------------
+ALPHA ALGORITHM:
+Initial testing:
+* L1.xes and L5.xes (indermediate results cf. [1] Chapter 6.2.2), final results Fig.6.1 and Fig.6.8
+
+Further testing:
+* L2.xes (Fig.6.2), L3.xes (Fig.6.5), L4.xes (Fig.6.6), running-example.xes (Fig.2.6)
+* billinstances.xes (result: "write bill" -> "print bill" -> "deliver bill", cf.[2] Fig.11)
+* posterinstances.xes (result: "receive order and photo" -> "design photo poster" -> "print poster" -> "deliver poster", cf.[2] Fig.11)
+
+Testing limitations:
+* L6.xes (Fig.6.9), L7.xes (Fig.6.10)
+* flyerinstances.xes (result: start -> "receive flyer order" -> "design flyer", "send draft to customer" -> "print flyer" -> "deliver flyer" -> end, cf.[2] Fig.11)
+------------------------------------
+DECISION MINING:
+running-example.xes (cf. [1] Fig.2.6)
+------------------------------------
+Data sources for more log files 
+* www.processmining.org
+* Business Process Intelligence (BPI) challenge logs
+* 4TU Datasets
+------------------------------------
+
+[1] W.M.P. van der Aalst, Process Mining: Data Science in Action, vol. 2, Springer, 2016, doi: 10.1007/978-3-662-49851-4.
+[2] K. Winter, F. Stertz, S. Rinderle-Ma, Discovering instance and process spanning constraints from process execution logs, Information Systems, vol. 89, 2020, doi: 10.1016/j.is.2019.101484

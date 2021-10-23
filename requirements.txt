@@ -1,2 +1,5 @@
-pm4py==2.2.11.1
+pm4py==2.2.15
 graphviz==0.17
+Flask==2.0.2
+Werkzeug==2.0.2
+flask-cors-3.0.10

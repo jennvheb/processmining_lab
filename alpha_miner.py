@@ -2,6 +2,7 @@ import copy
 import itertools
 import tempfile
 import graphviz
+import base64
 
 
 
@@ -99,7 +100,6 @@ class Alpha(object):
             for s in itertools.combinations(tl, i):
                 subsets.add(s)
         #for each combination in the subset, check if all pairs contained in it don't follow on each other
-        print("subsets", subsets)
         for a in subsets:
             truea = self._check_never_follow(a, unrel)
             for b in subsets:
@@ -126,7 +126,7 @@ class Alpha(object):
 
     
     def _build_pn_from_alpha(self, tl, yl, ti, to):
-        dot = graphviz.Digraph("alpha")
+        dot = graphviz.Digraph(name="alpha")
         for elem in yl:
             dot.node(str(elem), str(elem)) 
         for elem in tl:
@@ -144,4 +144,4 @@ class Alpha(object):
             for activity in b:
                 dot.edge(str((a,b)), str(activity))
 
-        dot.view(tempfile.mktemp('.gv.svg'))
+        dot.render(directory='static', format='svg')

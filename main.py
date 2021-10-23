@@ -8,8 +8,6 @@ from heuristic_miner import Heuristic
 import os
 from flask import Flask, flash, request, redirect, url_for, render_template, Markup
 from werkzeug.utils import secure_filename
-import base64
-from io import BytesIO
 
 def mining(xes):
     log = xes_importer.apply(xes)
