@@ -18,8 +18,10 @@ def preprocessing(xes):
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = set(['xes'])
 
+
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.secret_key = "super secret key"
 
 
 def allowed_file(filename):
@@ -36,13 +38,13 @@ def upload_file():
         # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
-            return redirect(request.url)
+            return render_template('error.html')
         file = request.files['file']
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if file.filename == '':
             flash('No selected file')
-            return redirect(request.url)
+            return render_template('error.html')
 
         if file and allowed_file(file.filename):
             sfilename = secure_filename(file.filename)

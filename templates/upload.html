@@ -35,15 +35,15 @@
 
       <script>
         function show() {
-                document.getElementById("ifYes").style.display = "block";
+                document.getElementById("ifShow").style.display = "block";
                
         }
       </script>
 
-      <div id="ifYes" style="display: none;">
-        <label for="car">Step 2.1: Set the thresholds and click submit</label><br/><br/>
-        <label for="car"> Absolute Number of Edges </label><input type=number class="form-control" name="Absolute" value="1"><br/>
-        <label for="car"> Relative Number of Edges </label><input type=number class="form-control" name="Relative" step="any" value="0.3"><br/><br/>
+      <div id="ifShow" style="display: none;">
+        <h5><b>Step 2.1: Set the thresholds and click submit</b><h5><br/>
+        <label for="Heuristic"> Absolute Number of Edges </label><input type=number class="form-control" name="Absolute" value="1"><br/><br/>
+        <label for="Heuristic"> Relative Number of Edges </label><input type=number class="form-control" name="Relative" step="any" value="0.3"><br/><br/>
         <input type=submit name="Submit" value="Submit">
       </div>
 

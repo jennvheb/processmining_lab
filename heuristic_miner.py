@@ -62,12 +62,13 @@ class Heuristic():
             causal_net.edge(str(elem), 'a_o')
         for elem in tl:
             causal_net.node(str(elem))
+        # generates the edges along with the dependency relation and dependency measure values for each activity pair
         for elem in ds:
                 causal_net.edge(str(elem[0]),str(elem[1]), ' ['+str(dr[elem])+'], ('+str(dm[elem])+ ')')
         
         causal_net.render(directory='static', format='svg')
       
-    
+   
 
 
 
