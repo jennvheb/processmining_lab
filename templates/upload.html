@@ -1,0 +1,59 @@
+
+    <!doctype html>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <div class="w3-container w3-center">
+      <br/>
+    <title>Alpha and Heuristic Mining Webservice</title>
+   
+    <h1>Alpha and Heuristic Mining Webservice</h1>
+    <br/><br/>
+    <form method=post enctype=multipart/form-data>
+
+      <h4>Step 1: Upload a xes-File:</h4>
+      <div class="w3-container w3-margin-left">
+        <div class="w3-container w3-margin-left">
+          <div class="w3-container w3-margin-left">
+            <div class="w3-container w3-margin-left">
+              <div class="w3-container w3-margin-left">
+                <div class="w3-container w3-margin-left">
+
+              <input type=file name=file>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+
+
+      <br/><br/>
+      <h4>Step 2: Choose a Mining Algorithm</h4>
+
+      <input type=submit name="Alpha Miner" value="Alpha Miner">
+      <button type=button onclick="show()">Heuristic Miner</button><br/><br/>
+
+      <script>
+        function show() {
+                document.getElementById("ifYes").style.display = "block";
+               
+        }
+      </script>
+
+      <div id="ifYes" style="display: none;">
+        <label for="car">Step 2.1: Set the thresholds and click submit</label><br/><br/>
+        <label for="car"> Absolute Number of Edges </label><input type=number class="form-control" name="Absolute" value="1"><br/>
+        <label for="car"> Relative Number of Edges </label><input type=number class="form-control" name="Relative" step="any" value="0.3"><br/><br/>
+        <input type=submit name="Submit" value="Submit">
+      </div>
+
+      
+      <br/><br/>
+      <br/>
+      
+    </div>
+    </div>
+    </form>
+  </div>
+
+

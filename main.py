@@ -9,20 +9,14 @@ import os
 from flask import Flask, flash, request, redirect, url_for, render_template, Markup
 from werkzeug.utils import secure_filename
 
-def mining(xes):
+def preprocessing(xes):
     log = xes_importer.apply(xes)
     tracefilter_log_pos = attributes_filter.apply_events(log, ["complete"], parameters={attributes_filter.Parameters.ATTRIBUTE_KEY: "lifecycle:transition", attributes_filter.Parameters.POSITIVE: True})
     variants = pm4py.get_variants_as_tuples(tracefilter_log_pos)
     return variants
 
-def alpha_algo(variants):
-    Alpha(variants.keys())
 
-def heuristic_algo(variants, freq_thrshld, ms_thrshold):
-    Heuristic(variants.keys(), freq_thrshld, ms_thrshold)
-
-
-UPLOAD_FOLDER = '/Users/jenny/processmining_lab/uploads'
+UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = set(['xes'])
 
 app = Flask(__name__)
@@ -56,19 +50,18 @@ def upload_file():
             output_path = os.path.join(app.config['UPLOAD_FOLDER'], sfilename)
             # Now save to this `output_path` and pass that same var to your mining function
             file.save(output_path)
-            pro_file = mining(output_path)
+            pro_file = preprocessing(output_path)
 
             if 'Alpha Miner' in request.form:
-                alpha_algo(pro_file)
+                Alpha(pro_file.keys())
                 img_url = url_for('static', filename='alpha.gv.svg')
                 return render_template('svg.html', img_url=img_url)
 
-                #return render_template('upload.html', file=processed_file)
             
-            elif 'Heuristic Miner' in request.form and 'Absolute' in request.form and 'Relative' in request.form:
+            elif 'Submit' in request.form and 'Absolute' in request.form and 'Relative' in request.form:
                 frequency = request.form['Absolute']
                 dependency = request.form['Relative']
-                heuristic_algo(pro_file, frequency, dependency)
+                Heuristic(pro_file.keys(), frequency, dependency)
                 img_url = url_for('static', filename='cnet.gv.svg')
                 return render_template('cnet.html', img_url=img_url)
 
