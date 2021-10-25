@@ -1,4 +1,3 @@
-from flask.app import Flask
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.filtering.log.attributes import attributes_filter
 import pm4py
