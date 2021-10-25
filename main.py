@@ -5,8 +5,9 @@ from pm4py.util.xes_constants import KEY_KEYS
 from alpha_miner import Alpha
 from heuristic_miner import Heuristic
 import os
-from flask import Flask, flash, request, redirect, url_for, render_template, Markup
+from flask import Flask, request, url_for, render_template
 from werkzeug.utils import secure_filename
+
 
 def preprocessing(xes):
     log = xes_importer.apply(xes)
@@ -37,13 +38,11 @@ def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
-            flash('No file part')
             return render_template('error.html')
         file = request.files['file']
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if file.filename == '':
-            flash('No selected file')
             return render_template('error.html')
 
         if file and allowed_file(file.filename):

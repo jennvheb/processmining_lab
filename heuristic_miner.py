@@ -1,9 +1,9 @@
 from alpha_miner import Alpha
 import graphviz
-import tempfile
 
 
 class Heuristic():
+
     def __init__(self, log, thrshld_df, thrshld_dm):
         self.log = log
         (self.activity_set, self.ti, self.to) = Alpha._build_tl_ti_to_set(self, self.log)

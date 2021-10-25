@@ -1,8 +1,6 @@
 import copy
 import itertools
-import tempfile
 import graphviz
-import base64
 
 
 
