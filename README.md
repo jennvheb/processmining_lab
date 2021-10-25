@@ -23,4 +23,6 @@ The process mining algorithms are based on the concepts presented in the book "P
 
 The webservice is a project of the lab "Implementation of Process Mining Algorithms: Transformative Business Knowledge" at the Technical University Munich.
 
+The folder data which contains xes-files that can be used as test inputs are owned by the Chair of Information Systems and Business Process Management at the Technical University of Munich.
+
 

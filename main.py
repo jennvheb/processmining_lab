@@ -56,7 +56,7 @@ def upload_file():
             if 'Alpha Miner' in request.form:
                 Alpha(pro_file.keys())
                 img_url = url_for('static', filename='alpha.gv.svg')
-                return render_template('svg.html', img_url=img_url)
+                return render_template('alpha.html', img_url=img_url)
 
             
             elif 'Submit' in request.form and 'Absolute' in request.form and 'Relative' in request.form:
