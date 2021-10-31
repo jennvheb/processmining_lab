@@ -8,9 +8,10 @@ import graphviz
 class Alpha(object):
  
     
-    def __init__(self,log):
+    def __init__(self,log, myuuid):
         self.log = log
         # all activites
+        self.outputname = str(myuuid)
         (self.tl, self.ti, self.to) = self._build_tl_ti_to_set(self.log)
         # directly follows
         self.df = self._build_df_set(self.log)
@@ -24,14 +25,16 @@ class Alpha(object):
         self.xl = self._build_xl_set(self.tl, self.unrel, self.caus)
         self.yl = self._build_yl_set(self.xl)
        
-        self._build_pn_from_alpha(self.tl, self.yl, self.ti, self.to)
+        self._build_pn_from_alpha(self.tl, self.yl, self.ti, self.to, self.outputname)
        
 
     def _build_tl_ti_to_set(self, log):
         tl = set()
         ti = set()
         to = set()
-        for trace in log: 
+
+
+        for trace in log:
             for activity in trace:
                 tl.add(activity)
                 ti.add(trace[0])
@@ -123,8 +126,8 @@ class Alpha(object):
         return yl
 
     
-    def _build_pn_from_alpha(self, tl, yl, ti, to):
-        dot = graphviz.Digraph(name="alpha")
+    def _build_pn_from_alpha(self, tl, yl, ti, to, outputname):
+        dot = graphviz.Digraph(name=outputname)
         for elem in yl:
             dot.node(str(elem), str(elem)) 
         for elem in tl:
