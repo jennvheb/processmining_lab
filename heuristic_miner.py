@@ -15,10 +15,8 @@ class Heuristic():
 
 
     def _create_dependency_relation(self, log): 
-        #find the number of frequencies
+        #find the frequencies of the directly follows relation
         frequ = {} # dict instead of set because we need to pair the tuples (keys) with their frequencies
-            # directly follows relation: x>y
-            # similar to alpha's df function with additional frequencies count
         for trace in log:
             for i in range(0, len(trace)-1):
                 if (trace[i], trace[i+1]) not in frequ:
@@ -30,6 +28,7 @@ class Heuristic():
 
         
     def _create_dependency_measure(self, dr, activity_set): 
+        # find the relative value of the dependency relation between a and b
         dm = {}
         # a follows b - b follows a / a follows b + b follows a + 1 if a not eqal b 
         # a follows a / a follows a + 1 if a equals a 
@@ -43,7 +42,7 @@ class Heuristic():
         
     
     def _create_dependency_set(self, dr, dm, thrshld_df, thrshld_dm):
-        # only return the df tuples that meet the dependency measure and dependency frequency thresholds
+        # only return the dependency relation tuples that meet the dependency measure and frequency thresholds
         ds = {}
         for element in dr:
             if dr[element] >= float(thrshld_df) and dm[element] >= float(str(thrshld_dm)):
@@ -52,18 +51,22 @@ class Heuristic():
 
     
     def _create_causal_net(self, tl, ds, dr, dm, outputname):
-        causal_net = graphviz.Digraph(name=outputname)
+        causal_net = graphviz.Digraph(name=outputname, node_attr= {'fontsize':'16', 'fontname': 'Arial'})
         causal_net.node_attr['shape'] = 'box'
         causal_net.node_attr['style'] = 'rounded'
+
+        # create the start activities and connect them to ai
         for elem in self.ti:
             causal_net.node(str(elem))
             causal_net.edge('a_i',str(elem))
+        # create the end activities and connect them to ao
         for elem in self.to:
             causal_net.node(str(elem))
             causal_net.edge(str(elem), 'a_o')
+        # create the rest of the activities
         for elem in tl:
             causal_net.node(str(elem))
-        # generates the edges along with the dependency relation and dependency measure values for each activity pair
+        # generates the edges along with the frequency and dependency measure values for each activity pair
         for elem in ds:
                 causal_net.edge(str(elem[0]),str(elem[1]), ' ['+str(dr[elem])+'], ('+str(dm[elem])+ ')')
         

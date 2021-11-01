@@ -1,4 +1,3 @@
-import copy
 import itertools
 import graphviz
 
@@ -10,8 +9,8 @@ class Alpha(object):
     
     def __init__(self,log, myuuid):
         self.log = log
-        # all activites
         self.outputname = str(myuuid)
+        # all activities
         (self.tl, self.ti, self.to) = self._build_tl_ti_to_set(self.log)
         # directly follows
         self.df = self._build_df_set(self.log)
@@ -21,19 +20,21 @@ class Alpha(object):
         self.unrel = self._build_unrel_set(self.tl, self.df)
         # parallel
         self.parallel = self._build_parallel_set(self.tl, self.df)
-    
+        # determine places and their connections
         self.xl = self._build_xl_set(self.tl, self.unrel, self.caus)
+        # remove non-maximal pairs from xl
         self.yl = self._build_yl_set(self.xl)
-       
+        # build the petri net
         self._build_pn_from_alpha(self.tl, self.yl, self.ti, self.to, self.outputname)
        
 
     def _build_tl_ti_to_set(self, log):
+        # set of all activites
         tl = set()
+        # set of all start activities
         ti = set()
+        # set of all end activities
         to = set()
-
-
         for trace in log:
             for activity in trace:
                 tl.add(activity)
@@ -43,7 +44,7 @@ class Alpha(object):
 
    
     def _build_df_set(self, log):
-        # directly follows relation: x>y
+        # directly follows: one activity directly follows on another one in the trace
         df = set()
         for trace in log:
             for i in range(0, len(trace)-1):
@@ -53,12 +54,14 @@ class Alpha(object):
     def _build_caus_set(self, ds):
         caus = set()
         for caus_tuple in ds:
-            # add tuple to causality set if the reverse tuple is not in the direct successions set
+            # add tuple to causality set if the reverse tuple is not 
+            # in the directly follows set
             if caus_tuple[::-1] not in ds: 
                 caus.add(caus_tuple)
         return caus
 
     def _build_unrel_set(self, tl, df):
+        # if x does not follow y and also not the other way around
         unrel = set()
         for x in tl:
             for y in tl:
@@ -67,8 +70,8 @@ class Alpha(object):
         return unrel
 
     def _build_parallel_set(self, tl, df):
+        # x follows y and also the other way around
         parallel = set()
-        
         for x in tl:
             for y in tl:
                     if (x, y) in df and (y,x) in df:
@@ -76,7 +79,7 @@ class Alpha(object):
         return parallel
 
     def _check_never_follow(self,A,unrel):
-        # check if all elements of A (B) never follow one another
+        # check if all activities of A (B) never follow one another
         for event in A:
             for event2 in A:
                 if (event, event2) not in unrel:
@@ -84,7 +87,7 @@ class Alpha(object):
         return True
 
     def _check_causality(self,A,B, caus):
-        # check if all elements of A are causal dependencies to all elements of B
+        # check if all elements of A are causally related to all elements of B
         for event in A:
             for event2 in B:
                 if (event, event2) not in caus:
@@ -94,13 +97,12 @@ class Alpha(object):
 
     def _build_xl_set(self, tl, unrel, caus):
         xl = set()
-        # make it pretty
         #create a subset containing possible combinations in tl up to the length of tl
         subsets = set()
         for i in range(1,len(tl)):
             for s in itertools.combinations(tl, i):
                 subsets.add(s)
-        #for each combination in the subset, check if all pairs contained in it don't follow on each other
+        #for each combination in the subset, check if all activities contained in it don't follow on each other
         for a in subsets:
             truea = self._check_never_follow(a, unrel)
             for b in subsets:
@@ -113,7 +115,6 @@ class Alpha(object):
 
     def _build_yl_set(self, xl):
         # only maximal pairs of xl should be in yl
-        yl = copy.deepcopy(xl)
         yl = xl.copy()
         for x in xl:
             a = set(x[0])
@@ -127,18 +128,24 @@ class Alpha(object):
 
     
     def _build_pn_from_alpha(self, tl, yl, ti, to, outputname):
-        dot = graphviz.Digraph(name=outputname)
+        dot = graphviz.Digraph(name=outputname, node_attr= {'fontsize':'16', 'fontname': 'Arial'})
+        
+        # generate the places
         for elem in yl:
-            dot.node(str(elem), str(elem)) 
+            dot.node(str(elem), str(elem), shape='oval') 
+        # generate the transitions
         for elem in tl:
             dot.node(str(elem), shape="box")
+            # generate ai and connect it to the start transitions
             if elem in ti:
                 dot.node('iL')
                 dot.edge('iL', str(elem))
+            # generate ol and connect it to the end transitions
             if elem in to:
                 dot.node('oL')
                 dot.edge(str(elem), 'oL')
-     
+
+        #generate the edges between the places and transitions
         for (a, b) in yl:
             for activity in a:
                 dot.edge(str(activity), str((a,b)))
