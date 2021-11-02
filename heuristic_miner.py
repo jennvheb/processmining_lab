@@ -30,7 +30,7 @@ class Heuristic():
     def _create_dependency_measure(self, dr, activity_set): 
         # find the relative value of the dependency relation between a and b
         dm = {}
-        # a follows b - b follows a / a follows b + b follows a + 1 if a not eqal b 
+        # a follows b - b follows a / a follows b + b follows a + 1 if a not equal b 
         # a follows a / a follows a + 1 if a equals a 
         for a in activity_set:
             for b in activity_set:
@@ -45,7 +45,7 @@ class Heuristic():
         # only return the dependency relation tuples that meet the dependency measure and frequency thresholds
         ds = {}
         for element in dr:
-            if dr[element] >= float(thrshld_df) and dm[element] >= float(str(thrshld_dm)):
+            if dr[element] >= float(thrshld_df) and dm[element] >= float(thrshld_dm):
                 ds[element] = dr[element]
         return ds
 

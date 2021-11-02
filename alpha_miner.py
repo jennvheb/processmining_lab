@@ -136,7 +136,7 @@ class Alpha(object):
         # generate the transitions
         for elem in tl:
             dot.node(str(elem), shape="box")
-            # generate ai and connect it to the start transitions
+            # generate il and connect it to the start transitions
             if elem in ti:
                 dot.node('iL')
                 dot.edge('iL', str(elem))
